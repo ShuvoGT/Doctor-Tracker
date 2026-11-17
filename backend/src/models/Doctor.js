@@ -7,6 +7,14 @@ const doctorSchema = new mongoose.Schema(
     hospital: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     email: { type: String, required: true, lowercase: true, trim: true, index: true },
+    gender: {
+      type: String,
+      enum: ['Male', 'Female', 'Other'],
+      set: (v) => (v === '' ? undefined : v),
+    },
+    qualification: { type: String, trim: true }, // e.g. "MBBS, FCPS (Cardiology)"
+    experience: { type: Number, min: 0, default: 0 }, // years of experience
+    fee: { type: Number, min: 0, default: 0 }, // consultation fee
   },
   { timestamps: true }
 );

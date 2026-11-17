@@ -8,6 +8,8 @@ export const PATIENT_CONDITIONS = [
 
 export const GENDERS = ['Male', 'Female', 'Other'];
 
+export const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+
 // Tailwind color classes per condition (badges).
 export const CONDITION_STYLES = {
   Stable: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',

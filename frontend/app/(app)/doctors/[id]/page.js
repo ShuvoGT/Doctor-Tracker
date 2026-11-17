@@ -12,6 +12,10 @@ import {
   Building2,
   Stethoscope,
   Users,
+  GraduationCap,
+  Wallet,
+  Award,
+  User,
 } from 'lucide-react';
 import { swrFetcher, apiFetch } from '@/lib/api';
 import { formatDate, initials } from '@/lib/format';
@@ -138,6 +142,30 @@ export default function DoctorDetailPage() {
                   <Phone className="h-4 w-4" /> {doctor.phone}
                 </span>
               </div>
+              {(doctor.qualification || doctor.gender || doctor.experience || doctor.fee) && (
+                <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500">
+                  {doctor.qualification && (
+                    <span className="inline-flex items-center gap-1">
+                      <GraduationCap className="h-4 w-4" /> {doctor.qualification}
+                    </span>
+                  )}
+                  {doctor.gender && (
+                    <span className="inline-flex items-center gap-1">
+                      <User className="h-4 w-4" /> {doctor.gender}
+                    </span>
+                  )}
+                  {doctor.experience ? (
+                    <span className="inline-flex items-center gap-1">
+                      <Award className="h-4 w-4" /> {doctor.experience} yrs exp.
+                    </span>
+                  ) : null}
+                  {doctor.fee ? (
+                    <span className="inline-flex items-center gap-1">
+                      <Wallet className="h-4 w-4" /> Fee {doctor.fee}
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-6">

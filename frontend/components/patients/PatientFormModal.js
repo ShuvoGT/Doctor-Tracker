@@ -6,9 +6,20 @@ import Modal from '@/components/ui/Modal';
 import Spinner from '@/components/ui/Spinner';
 import { apiFetch, swrFetcher } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
-import { PATIENT_CONDITIONS, GENDERS } from '@/lib/constants';
+import { PATIENT_CONDITIONS, GENDERS, BLOOD_GROUPS } from '@/lib/constants';
 
-const EMPTY = { name: '', age: '', gender: 'Male', phone: '', condition: 'Stable', doctor: '' };
+const EMPTY = {
+  name: '',
+  age: '',
+  gender: 'Male',
+  phone: '',
+  email: '',
+  bloodGroup: '',
+  address: '',
+  diagnosis: '',
+  condition: 'Stable',
+  doctor: '',
+};
 
 // Create/edit a patient. With lockedDoctorId the doctor is fixed (doctor detail
 // page); otherwise a doctor dropdown is shown (Patients page).
@@ -36,6 +47,10 @@ export default function PatientFormModal({ open, onClose, onSaved, patient, lock
         age: patient.age ?? '',
         gender: patient.gender || 'Male',
         phone: patient.phone || '',
+        email: patient.email || '',
+        bloodGroup: patient.bloodGroup || '',
+        address: patient.address || '',
+        diagnosis: patient.diagnosis || '',
         condition: patient.condition || 'Stable',
         doctor: patient.doctor?._id || patient.doctor || lockedDoctorId || '',
       });
@@ -56,6 +71,10 @@ export default function PatientFormModal({ open, onClose, onSaved, patient, lock
       age: Number(form.age),
       gender: form.gender,
       phone: form.phone,
+      email: form.email,
+      bloodGroup: form.bloodGroup,
+      address: form.address,
+      diagnosis: form.diagnosis,
       condition: form.condition,
       doctor: lockedDoctorId || form.doctor,
     };
@@ -148,6 +167,51 @@ export default function PatientFormModal({ open, onClose, onSaved, patient, lock
               ))}
             </select>
           </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="label">Blood Group</label>
+            <select className="input" value={form.bloodGroup} onChange={update('bloodGroup')}>
+              <option value="">Unknown</option>
+              {BLOOD_GROUPS.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="label">Email</label>
+            <input
+              className="input"
+              type="email"
+              value={form.email}
+              onChange={update('email')}
+              placeholder="john@example.com"
+            />
+            {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label className="label">Address</label>
+          <input
+            className="input"
+            value={form.address}
+            onChange={update('address')}
+            placeholder="123 Main St, City"
+          />
+        </div>
+
+        <div>
+          <label className="label">Diagnosis / Notes</label>
+          <textarea
+            className="input min-h-[72px] resize-y"
+            value={form.diagnosis}
+            onChange={update('diagnosis')}
+            placeholder="Reason for visit, disease, or notes…"
+          />
         </div>
 
         {!lockedDoctorId && (

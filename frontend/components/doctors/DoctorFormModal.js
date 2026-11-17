@@ -5,8 +5,19 @@ import Modal from '@/components/ui/Modal';
 import Spinner from '@/components/ui/Spinner';
 import { apiFetch } from '@/lib/api';
 import { useToast } from '@/components/ui/Toast';
+import { GENDERS } from '@/lib/constants';
 
-const EMPTY = { name: '', specialization: '', hospital: '', phone: '', email: '' };
+const EMPTY = {
+  name: '',
+  specialization: '',
+  hospital: '',
+  phone: '',
+  email: '',
+  gender: '',
+  qualification: '',
+  experience: '',
+  fee: '',
+};
 
 export default function DoctorFormModal({ open, onClose, onSaved, doctor }) {
   const toast = useToast();
@@ -25,6 +36,10 @@ export default function DoctorFormModal({ open, onClose, onSaved, doctor }) {
               hospital: doctor.hospital || '',
               phone: doctor.phone || '',
               email: doctor.email || '',
+              gender: doctor.gender || '',
+              qualification: doctor.qualification || '',
+              experience: doctor.experience ?? '',
+              fee: doctor.fee ?? '',
             }
           : EMPTY
       );
@@ -38,12 +53,25 @@ export default function DoctorFormModal({ open, onClose, onSaved, doctor }) {
     e.preventDefault();
     setSaving(true);
     setErrors({});
+
+    const payload = {
+      name: form.name,
+      specialization: form.specialization,
+      hospital: form.hospital,
+      phone: form.phone,
+      email: form.email,
+      gender: form.gender,
+      qualification: form.qualification,
+      experience: form.experience === '' ? undefined : Number(form.experience),
+      fee: form.fee === '' ? undefined : Number(form.fee),
+    };
+
     try {
       if (isEdit) {
-        await apiFetch(`/doctors/${doctor._id}`, { method: 'PUT', body: form });
+        await apiFetch(`/doctors/${doctor._id}`, { method: 'PUT', body: payload });
         toast.success('Doctor updated');
       } else {
-        await apiFetch('/doctors', { method: 'POST', body: form });
+        await apiFetch('/doctors', { method: 'POST', body: payload });
         toast.success('Doctor created');
       }
       onSaved?.();
@@ -60,33 +88,125 @@ export default function DoctorFormModal({ open, onClose, onSaved, doctor }) {
     }
   }
 
-  const fields = [
-    { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Dr. Jane Doe' },
-    { key: 'specialization', label: 'Specialization', type: 'text', placeholder: 'Cardiology' },
-    { key: 'hospital', label: 'Hospital', type: 'text', placeholder: 'City General Hospital' },
-    { key: 'phone', label: 'Phone', type: 'text', placeholder: '+1-555-0100' },
-    { key: 'email', label: 'Email', type: 'email', placeholder: 'jane@hospital.com' },
-  ];
+  const err = (name) =>
+    errors[name] ? <p className="mt-1 text-xs text-red-600">{errors[name]}</p> : null;
 
   return (
-    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Doctor' : 'Add Doctor'}>
+    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Doctor' : 'Add Doctor'} size="lg">
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {fields.map((f, i) => (
-            <div key={f.key} className={f.key === 'email' ? 'sm:col-span-2' : ''}>
-              <label className="label">{f.label}</label>
-              <input
-                className="input"
-                type={f.type}
-                placeholder={f.placeholder}
-                value={form[f.key]}
-                onChange={update(f.key)}
-                autoFocus={i === 0}
-                required
-              />
-              {errors[f.key] && <p className="mt-1 text-xs text-red-600">{errors[f.key]}</p>}
-            </div>
-          ))}
+          <div className="sm:col-span-2">
+            <label className="label">Full Name</label>
+            <input
+              className="input"
+              value={form.name}
+              onChange={update('name')}
+              placeholder="Dr. Jane Doe"
+              autoFocus
+              required
+            />
+            {err('name')}
+          </div>
+
+          <div>
+            <label className="label">Specialization</label>
+            <input
+              className="input"
+              value={form.specialization}
+              onChange={update('specialization')}
+              placeholder="Cardiology"
+              required
+            />
+            {err('specialization')}
+          </div>
+
+          <div>
+            <label className="label">Gender</label>
+            <select className="input" value={form.gender} onChange={update('gender')}>
+              <option value="">Not specified</option>
+              {GENDERS.map((g) => (
+                <option key={g} value={g}>
+                  {g}
+                </option>
+              ))}
+            </select>
+            {err('gender')}
+          </div>
+
+          <div>
+            <label className="label">Qualification / Degree</label>
+            <input
+              className="input"
+              value={form.qualification}
+              onChange={update('qualification')}
+              placeholder="MBBS, FCPS (Cardiology)"
+            />
+            {err('qualification')}
+          </div>
+
+          <div>
+            <label className="label">Hospital</label>
+            <input
+              className="input"
+              value={form.hospital}
+              onChange={update('hospital')}
+              placeholder="City General Hospital"
+              required
+            />
+            {err('hospital')}
+          </div>
+
+          <div>
+            <label className="label">Experience (years)</label>
+            <input
+              className="input"
+              type="number"
+              min="0"
+              max="80"
+              value={form.experience}
+              onChange={update('experience')}
+              placeholder="8"
+            />
+            {err('experience')}
+          </div>
+
+          <div>
+            <label className="label">Consultation Fee</label>
+            <input
+              className="input"
+              type="number"
+              min="0"
+              value={form.fee}
+              onChange={update('fee')}
+              placeholder="500"
+            />
+            {err('fee')}
+          </div>
+
+          <div>
+            <label className="label">Phone</label>
+            <input
+              className="input"
+              value={form.phone}
+              onChange={update('phone')}
+              placeholder="+1-555-0100"
+              required
+            />
+            {err('phone')}
+          </div>
+
+          <div>
+            <label className="label">Email</label>
+            <input
+              className="input"
+              type="email"
+              value={form.email}
+              onChange={update('email')}
+              placeholder="jane@hospital.com"
+              required
+            />
+            {err('email')}
+          </div>
         </div>
 
         <div className="flex justify-end gap-2 pt-2">

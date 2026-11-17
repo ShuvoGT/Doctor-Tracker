@@ -192,9 +192,19 @@ export default function PatientsPage() {
                     </td>
                     <td className="px-4 py-3 text-slate-600">
                       {p.age} · {p.gender}
+                      {p.bloodGroup && (
+                        <span className="mt-0.5 block text-xs font-semibold text-red-600">
+                          {p.bloodGroup}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <ConditionBadge condition={p.condition} />
+                      {p.diagnosis && (
+                        <span className="mt-0.5 block max-w-[200px] truncate text-xs text-slate-400">
+                          {p.diagnosis}
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {p.doctor ? (

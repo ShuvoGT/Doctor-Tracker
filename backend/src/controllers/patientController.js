@@ -72,18 +72,31 @@ export const getPatient = asyncHandler(async (req, res) => {
 
 // POST /api/patients
 export const createPatient = asyncHandler(async (req, res) => {
-  const { name, age, gender, phone, condition, doctor } = req.body;
-  const patient = await Patient.create({ name, age, gender, phone, condition, doctor });
+  const { name, age, gender, phone, email, bloodGroup, address, diagnosis, condition, doctor } =
+    req.body;
+  const patient = await Patient.create({
+    name,
+    age,
+    gender,
+    phone,
+    email,
+    bloodGroup,
+    address,
+    diagnosis,
+    condition,
+    doctor,
+  });
   const populated = await patient.populate('doctor', 'name specialization hospital');
   res.status(201).json({ data: populated });
 });
 
 // PUT /api/patients/:id
 export const updatePatient = asyncHandler(async (req, res) => {
-  const { name, age, gender, phone, condition, doctor } = req.body;
+  const { name, age, gender, phone, email, bloodGroup, address, diagnosis, condition, doctor } =
+    req.body;
   const patient = await Patient.findByIdAndUpdate(
     req.params.id,
-    { name, age, gender, phone, condition, doctor },
+    { name, age, gender, phone, email, bloodGroup, address, diagnosis, condition, doctor },
     { new: true, runValidators: true }
   ).populate('doctor', 'name specialization hospital');
   if (!patient) return res.status(404).json({ message: 'Patient not found' });
